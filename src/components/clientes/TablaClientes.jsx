@@ -3,13 +3,14 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// Declaración del componente TablaClientes que recibe props
 const TablaClientes = ({ clientes, cargando, error }) => {
-  
+  // Renderizado condicional según el estado recibido por props
   if (cargando) {
-    return <div>Cargando TablaClientes...</div>; // Muestra mensaje mientras carga
+    return <div>Cargando clientes...</div>; // Muestra mensaje mientras carga
   }
   if (error) {
-    return <div>Error: {error}</div>;         // Muestra error si ocurre
+    return <div>Error: {error}</div>; // Muestra error si ocurre
   }
 
   // Renderizado de la tabla con los datos recibidos
@@ -18,13 +19,13 @@ const TablaClientes = ({ clientes, cargando, error }) => {
       <thead className="table-dark">
         <tr>
           <th>ID Cliente</th>
-          <th>Primer nombre</th>
-          <th>Segundo nombre</th>
-          <th>Primer apellido</th>
-          <th>Segundo apellido</th>
+          <th>Primer Nombre</th>
+          <th>Segundo Nombre</th>
+          <th>Primer Apellido</th>
+          <th>Segundo Apellido</th>
           <th>Celular</th>
-          <th>Direccion</th>
-          <th>Cedula</th>
+          <th>Dirección</th>
+          <th>Cédula</th>
         </tr>
       </thead>
       <tbody>
