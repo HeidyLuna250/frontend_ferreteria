@@ -1,31 +1,24 @@
 // Importaciones necesarias para el componente visual
 import React from 'react';
-import { Table, Spinner, Alert, Container } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// Declaración del componente TablaEmpleados que recibe props
 const TablaEmpleados = ({ empleados, cargando, error }) => {
+  // Renderizado condicional según el estado recibido por props
   if (cargando) {
-    return (
-      <Container className="text-center mt-4">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </Spinner>
-      </Container>
-    );
+    return <div>Cargando empleados...</div>; // Muestra mensaje mientras carga
   }
   if (error) {
-    return <Alert variant="danger">Error: {error}</Alert>;
+    return <div>Error: {error}</div>; // Muestra error si ocurre
   }
 
-  if (empleados.length === 0) {
-    return <Alert variant="warning">No hay empleados registrados.</Alert>;
-  }
-
+  // Renderizado de la tabla con los datos recibidos
   return (
-    <Table striped bordered hover responsive className="mt-3">
+    <Table striped bordered hover responsive>
       <thead className="table-dark">
         <tr>
-          <th>ID</th>
+          <th>ID Empleado</th>
           <th>Primer Nombre</th>
           <th>Segundo Nombre</th>
           <th>Primer Apellido</th>
@@ -40,12 +33,12 @@ const TablaEmpleados = ({ empleados, cargando, error }) => {
           <tr key={empleado.id_empleado}>
             <td>{empleado.id_empleado}</td>
             <td>{empleado.primer_nombre}</td>
-            <td>{empleado.segundo_nombre || 'N/A'}</td>
+            <td>{empleado.segundo_nombre}</td>
             <td>{empleado.primer_apellido}</td>
-            <td>{empleado.segundo_apellido || 'N/A'}</td>
+            <td>{empleado.segundo_apellido}</td>
             <td>{empleado.celular}</td>
             <td>{empleado.cargo}</td>
-            <td>{new Date(empleado.fecha_contratacion).toLocaleDateString()}</td>
+            <td>{empleado.fecha_contratacion}</td>
           </tr>
         ))}
       </tbody>
@@ -53,4 +46,5 @@ const TablaEmpleados = ({ empleados, cargando, error }) => {
   );
 };
 
+// Exportación del componente
 export default TablaEmpleados;
