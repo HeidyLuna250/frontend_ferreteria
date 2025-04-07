@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import TablaUsuarios from '../components/usuarios/TablaUsuarios.jsx'; // Importa el componente de tabla
 import ModalRegistroUsuario from '../components/usuarios/ModalRegistroUsuario.jsx';
-import { Container, Button } from "react-bootstrap";
+import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
+import { Container, Button, Row, Col } from "react-bootstrap";
 
 // Declaración del componente Categorias
 const Usuarios = () => {
@@ -18,6 +19,9 @@ const Usuarios = () => {
     contraseña: ''
   });
 
+  const [usuariosFiltrados, setUsuariosFiltradas] = useState([]);
+  const [textoBusqueda, setTextoBusqueda] = useState("");
+
   const obtenerUsuarios = async () => { // Método renombrado a español
     try {
       const respuesta = await fetch('http://localhost:3000/api/usuarios');
@@ -26,6 +30,7 @@ const Usuarios = () => {
       }
       const datos = await respuesta.json();
       setListaUsuarios(datos);    // Actualiza el estado con los datos
+      setUsuariosFiltradas(datos);
       setCargando(false);           // Indica que la carga terminó
     } catch (error) {
       setErrorCarga(error.message); // Guarda el mensaje de error
@@ -72,6 +77,18 @@ const Usuarios = () => {
     } catch (error) {
       setErrorCarga(error.message);
     }
+  };
+
+  const manejarCambioBusqueda = (e) => {
+    const texto = e.target.value.toLowerCase();
+    setTextoBusqueda(texto);
+    
+    const filtrados = listaUsuarios.filter(
+      (usuario) =>
+        usuario.usuario.toLowerCase().includes(texto) ||
+        usuario.contraseña.toLowerCase().includes(texto)
+    );
+    setUsuariosFiltradas(filtrados);
   };
 
   return (

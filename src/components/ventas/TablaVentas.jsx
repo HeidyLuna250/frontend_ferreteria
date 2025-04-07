@@ -29,16 +29,16 @@ const TablaVentas = ({ ventas, cargando, error }) => {
       </thead>
       <tbody>
         {ventas.map((venta) => (
-          <tr key={`${venta.id_venta}-${venta.id_detalle_venta}`}> {/* Clave única combinada */}
+          <tr key={`${venta.id_venta}-${venta.id_detalle_venta}`}> {/* GENERA UNA CLAVE ÚNICA USANDO ID_VENTA Y ID_DETALLE_VENTA */}
             <td>{venta.id_venta}</td>
             <td>{venta.id_detalle_venta}</td>
             <td>{venta.fecha_venta}</td>
-            <td>{venta.nombre_cliente}</td>
-            <td>{venta.nombre_empleado}</td>
-            <td>{venta.nombre_producto}</td>
-            <td>{venta.cantidad}</td>
-            <td>C$ {venta.precio_unitario.toFixed(2)}</td>
-            <td>C$ {venta.subtotal.toFixed(2)}</td>
+            <td>{venta.nombre_cliente}</td> {/* MUESTRA EL NOMBRE DEL CLIENTE ASOCIADO A LA VENTA */}
+            <td>{venta.nombre_empleado}</td> {/* MUESTRA EL NOMBRE DEL EMPLEADO QUE REGISTRÓ LA VENTA */}
+            <td>{venta.nombre_producto}</td> {/* MUESTRA EL NOMBRE DEL PRODUCTO VENDIDO */}
+            <td>{venta.cantidad}</td> {/* MUESTRA LA CANTIDAD DE PRODUCTOS VENDIDOS */}
+            <td>C$ {venta.precio_unitario.toFixed(2)}</td> {/* FORMATEA EL PRECIO UNITARIO A DOS DECIMALES */}
+            <td>C$ {venta.subtotal.toFixed(2)}</td> {/* CALCULA Y MUESTRA EL SUBTOTAL DE LA VENTA */}
           </tr>
         ))}
       </tbody>

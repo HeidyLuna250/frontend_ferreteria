@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import TablaEmpleados from '../components/empleados/TablaEmpleados.jsx'; // Importa el componente de tabla
 import ModalRegistroEmpleado from '../components/empleados/ModalRegistroEmpleado.jsx';
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Row, Col } from "react-bootstrap";
 
 // Declaración del componente Empleados
 const Empleados = () => {
