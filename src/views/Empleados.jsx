@@ -1,15 +1,16 @@
 // Importaciones necesarias para la vista
 import React, { useState, useEffect } from 'react';
-import TablaEmpleados from '../components/empleados/TablaEmpleados.jsx'; // Importa el componente de tabla
-import ModalRegistroEmpleado from '../components/empleados/ModalRegistroEmpleado.jsx';
+import TablaEmpleados from '../components/empleados/TablaEmpleados.jsx'; // Ajustado para empleados
+import ModalRegistroEmpleado from '../components/empleados/ModalRegistroEmpleado.jsx'; // Ajustado para empleados
+import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
 import { Container, Button, Row, Col } from "react-bootstrap";
 
 // Declaración del componente Empleados
 const Empleados = () => {
   // Estados para manejar los datos, carga y errores
   const [listaEmpleados, setListaEmpleados] = useState([]); // Almacena los datos de la API
-  const [cargando, setCargando] = useState(true);         // Controla el estado de carga
-  const [errorCarga, setErrorCarga] = useState(null);     // Maneja errores de la petición
+  const [cargando, setCargando] = useState(true);          // Controla el estado de carga
+  const [errorCarga, setErrorCarga] = useState(null);      // Maneja errores de la petición
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoEmpleado, setNuevoEmpleado] = useState({
@@ -21,27 +22,30 @@ const Empleados = () => {
     cargo: '',
     fecha_contratacion: ''
   });
-
-  // Función para obtener la lista de empleados desde la API
+  
+  const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
+  const [textoBusqueda, setTextoBusqueda] = useState("");
+  
   const obtenerEmpleados = async () => {
     try {
-      const respuesta = await fetch('http://localhost:3000/api/empleados');
+      const respuesta = await fetch('http://localhost:3000/api/empleados'); // Ajusta la ruta API
       if (!respuesta.ok) {
         throw new Error('Error al cargar los empleados');
       }
       const datos = await respuesta.json();
-      setListaEmpleados(datos); // Actualiza el estado con los datos
-      setCargando(false);      // Indica que la carga terminó
+      setListaEmpleados(datos);
+      setEmpleadosFiltrados(datos);
+      setCargando(false);
     } catch (error) {
-      setErrorCarga(error.message); // Guarda el mensaje de error
-      setCargando(false);           // Termina la carga aunque haya error
+      setErrorCarga(error.message);
+      setCargando(false);
     }
-  };
+  }; 
 
-  // Llamar a obtenerEmpleados cuando el componente se monta
+  // Lógica de obtención de datos con useEffect
   useEffect(() => {
     obtenerEmpleados();
-  }, []);
+  }, []); 
 
   // Maneja los cambios en los inputs del modal
   const manejarCambioInput = (e) => {
@@ -50,18 +54,17 @@ const Empleados = () => {
       ...prev,
       [name]: value
     }));
-  };
+  };                          
 
-  // Maneja la inserción de un nuevo empleado
+  // Manejo la inserción de un nuevo empleado
   const agregarEmpleado = async () => {
-    // Validar que todos los campos obligatorios estén llenos
     if (!nuevoEmpleado.primer_nombre || !nuevoEmpleado.primer_apellido || !nuevoEmpleado.celular || !nuevoEmpleado.cargo || !nuevoEmpleado.fecha_contratacion) {
-      setErrorCarga("Por favor, completa todos los campos obligatorios antes de guardar.");
+      setErrorCarga("Por favor, completa los campos obligatorios (primer nombre, primer apellido, celular, cargo y fecha de contratación).");
       return;
     }
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/registrarempleado', {
+      const respuesta = await fetch('http://localhost:3000/api/registrarempleado', { // Ajusta la ruta API
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +76,7 @@ const Empleados = () => {
         throw new Error('Error al agregar el empleado');
       }
 
-      await obtenerEmpleados(); // Refresca toda la lista desde el servidor
+      await obtenerEmpleados(); // Refresca la lista desde el servidor
       setNuevoEmpleado({
         primer_nombre: '',
         segundo_nombre: '',
@@ -90,6 +93,23 @@ const Empleados = () => {
     }
   };
 
+  const manejarCambioBusqueda = (e) => {
+    const texto = e.target.value.toLowerCase();
+    setTextoBusqueda(texto);
+    
+    const filtrados = listaEmpleados.filter(
+      (empleado) =>
+        empleado.primer_nombre.toLowerCase().includes(texto) ||
+        (empleado.segundo_nombre && empleado.segundo_nombre.toLowerCase().includes(texto)) ||
+        empleado.primer_apellido.toLowerCase().includes(texto) ||
+        (empleado.segundo_apellido && empleado.segundo_apellido.toLowerCase().includes(texto)) ||
+        empleado.celular.toLowerCase().includes(texto) ||
+        empleado.cargo.toLowerCase().includes(texto) ||
+        empleado.fecha_contratacion.toString().toLowerCase().includes(texto)
+    );
+    setEmpleadosFiltrados(filtrados);
+  };
+
   // Renderizado de la vista
   return (
     <>
@@ -97,14 +117,29 @@ const Empleados = () => {
         <br />
         <h4>Empleados</h4>
 
-        <Button variant="primary" onClick={() => setMostrarModal(true)}>
-          Nuevo Empleado
-        </Button>
-        <br/><br/>
+        <Row>
+          <Col lg={2} md={4} sm={4} xs={5}>
+            <Button 
+              variant="primary"
+              onClick={() => setMostrarModal(true)}
+              style={{width: "100%"}}
+            >
+              Nuevo Empleado
+            </Button>
+          </Col>
+          
+          <Col lg={6} md={8} sm={8} xs={7}>
+            <CuadroBusquedas
+              textoBusqueda={textoBusqueda}
+              manejarCambioBusqueda={manejarCambioBusqueda}
+            />
+          </Col>
+        </Row> 
 
-        {/* Pasa los estados como props al componente TablaEmpleados */}
+        <br/>
+
         <TablaEmpleados 
-          empleados={listaEmpleados} 
+          empleados={empleadosFiltrados} 
           cargando={cargando} 
           error={errorCarga}   
         />
