@@ -25,6 +25,9 @@ const Clientes = () => {
   
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 4; // Número de elementos por página
   
   const obtenerClientes = async () => {
     try {
@@ -110,6 +113,12 @@ const Clientes = () => {
     setClientesFiltrados(filtrados);
   };
 
+  // Calcular elementos paginados
+const clientesPaginados = clientesFiltrados.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+);
+
   // Renderizado de la vista
   return (
     <>
@@ -139,9 +148,13 @@ const Clientes = () => {
         <br/>
 
         <TablaClientes 
-          clientes={clientesFiltrados} 
+          clientes={clientesPaginados} 
           cargando={cargando} 
           error={errorCarga}   
+          totalElementos={listaClientes.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
 
         <ModalRegistroCliente

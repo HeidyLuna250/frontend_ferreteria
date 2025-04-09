@@ -26,6 +26,9 @@ const Productos = () => {
     imagen: ''
   });
 
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 4; // Número de elementos por página
+
   // Obtener productos
   const obtenerProductos = async () => {
     try {
@@ -119,6 +122,12 @@ const Productos = () => {
     setProductosFiltrados(filtrados);
   };
 
+  // Calcular elementos paginados
+    const productosPaginados = productosFiltrados.slice(
+      (paginaActual - 1) * elementosPorPagina,
+      paginaActual * elementosPorPagina
+    );
+
   // Renderizado de la vista
   return (
     <>
@@ -149,10 +158,13 @@ const Productos = () => {
 
         {/* Pasa los productos filtrados al componente TablaProductos */}
         <TablaProductos
-          productos={productosFiltrados} 
+          productos={productosPaginados} 
           cargando={cargando} 
-          error={errorCarga} 
-        />
+          totalElementos={listaProductos.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
+        />        
 
         <ModalRegistroProducto
           mostrarModal={mostrarModal}

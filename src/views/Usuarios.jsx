@@ -21,6 +21,9 @@ const Usuarios = () => {
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
   
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 4; // Número de elementos por página
+
   const obtenerUsuarios = async () => {
     try {
       const respuesta = await fetch('http://localhost:3000/api/usuarios'); // Ajusta la ruta API
@@ -92,6 +95,12 @@ const Usuarios = () => {
     setUsuariosFiltrados(filtrados);
   };
 
+  // Calcular elementos paginados
+    const usuariosPaginados = usuariosFiltrados.slice(
+      (paginaActual - 1) * elementosPorPagina,
+      paginaActual * elementosPorPagina
+    );
+
   // Renderizado de la vista
   return (
     <>
@@ -121,9 +130,13 @@ const Usuarios = () => {
         <br/>
 
         <TablaUsuarios 
-          usuarios={usuariosFiltrados} 
+          usuarios={usuariosPaginados} 
           cargando={cargando} 
-          error={errorCarga}   
+          error={errorCarga}  
+          totalElementos={listaUsuarios.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página  
         />
 
         <ModalRegistroUsuario

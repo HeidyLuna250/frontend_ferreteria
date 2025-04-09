@@ -25,6 +25,9 @@ const Empleados = () => {
   
   const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 4; // Número de elementos por página
   
   const obtenerEmpleados = async () => {
     try {
@@ -96,6 +99,7 @@ const Empleados = () => {
   const manejarCambioBusqueda = (e) => {
     const texto = e.target.value.toLowerCase();
     setTextoBusqueda(texto);
+    establecerPaginaActual(1);
     
     const filtrados = listaEmpleados.filter(
       (empleado) =>
@@ -109,6 +113,12 @@ const Empleados = () => {
     );
     setEmpleadosFiltrados(filtrados);
   };
+
+  // Calcular elementos paginados
+const empleadosPaginados = empleadosFiltrados.slice(
+  (paginaActual - 1) * elementosPorPagina,
+   paginaActual * elementosPorPagina
+);
 
   // Renderizado de la vista
   return (
@@ -139,9 +149,13 @@ const Empleados = () => {
         <br/>
 
         <TablaEmpleados 
-          empleados={empleadosFiltrados} 
+          empleados={empleadosPaginados} 
           cargando={cargando} 
           error={errorCarga}   
+          totalElementos={listaEmpleados.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
 
         <ModalRegistroEmpleado
