@@ -115,10 +115,10 @@ const Empleados = () => {
   };
 
   // Calcular elementos paginados
-const empleadosPaginados = empleadosFiltrados.slice(
-  (paginaActual - 1) * elementosPorPagina,
-   paginaActual * elementosPorPagina
-);
+  const empleadosPaginados = empleadosFiltrados.slice(
+    (paginaActual - 1) * elementosPorPagina,
+    paginaActual * elementosPorPagina
+    );
 
   // Renderizado de la vista
   return (

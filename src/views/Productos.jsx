@@ -123,10 +123,10 @@ const Productos = () => {
   };
 
   // Calcular elementos paginados
-    const productosPaginados = productosFiltrados.slice(
-      (paginaActual - 1) * elementosPorPagina,
-      paginaActual * elementosPorPagina
-    );
+  const productosPaginados = productosFiltrados.slice(
+    (paginaActual - 1) * elementosPorPagina,
+    paginaActual * elementosPorPagina
+  );
 
   // Renderizado de la vista
   return (
@@ -156,14 +156,16 @@ const Productos = () => {
 
         <br/>
 
-        {/* Pasa los productos filtrados al componente TablaProductos */}
+        {/* Pasa los productos filtrados y las categorías al componente TablaProductos */}
         <TablaProductos
           productos={productosPaginados} 
           cargando={cargando} 
-          totalElementos={listaProductos.length} // Total de elementos
-          elementosPorPagina={elementosPorPagina} // Elementos por página
-          paginaActual={paginaActual} // Página actual
-          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
+          error={errorCarga} // Añadí error para que sea consistente con TablaProductos
+          totalElementos={listaProductos.length} 
+          elementosPorPagina={elementosPorPagina} 
+          paginaActual={paginaActual} 
+          establecerPaginaActual={establecerPaginaActual} 
+          categorias={listaCategorias} // Pasa las categorías aquí
         />        
 
         <ModalRegistroProducto
