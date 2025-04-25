@@ -1,58 +1,73 @@
-// Importaciones necesarias para el componente visual
 import React from 'react';
-import { Table } from 'react-bootstrap';
-import Paginacion from "../ordenamiento/Paginacion";
+import { Table, Button } from 'react-bootstrap';
+import Paginacion from '../ordenamiento/Paginacion';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Declaración del componente TablaUsuariosu que recibe props
 const TablaUsuarios = ({ 
-    usuarios, 
-    cargando, 
-    error,
-    totalElementos,
-    elementosPorPagina,
-    paginaActual,
-    establecerPaginaActual 
-    }) => {
-
-  // Renderizado condicional según el estado recibido por props
+  usuarios, 
+  cargando, 
+  error,
+  totalElementos,
+  elementosPorPagina,
+  paginaActual,
+  establecerPaginaActual,
+  abrirModalEliminacion,
+  abrirModalEdicion
+}) => {
   if (cargando) {
-    return <div>Cargando usuarios...</div>; // Muestra mensaje mientras carga
+    return <div>Cargando usuarios...</div>;
   }
   if (error) {
-    return <div>Error: {error}</div>;         // Muestra error si ocurre
+    return <div>Error: {error}</div>;
   }
 
-  // Renderizado de la tabla con los datos recibidos
   return (
     <>
-    <Table striped bordered hover responsive>
+      <Table striped bordered hover responsive>
       <thead className="table-dark">
-        <tr>
-          <th>ID Usuario</th>
-          <th>Usuario</th>
-          <th>Contraseña</th>
-        </tr>
-      </thead>
-      <tbody>
-        {usuarios.map((usuario) => (
-          <tr key={usuario.id_usuario}>
-            <td>{usuario.id_usuario}</td>
-            <td>{usuario.usuario}</td>
-            <td>{usuario.contraseña}</td>
+          <tr>
+            <th>ID Usuario</th>
+            <th>Nombre de Usuario</th>
+            <th>Contraseña</th>
+            <th>Acciones</th>
           </tr>
-        ))}
-      </tbody>
-    </Table>
-    <Paginacion
-  elementosPorPagina={elementosPorPagina}
-  totalElementos={totalElementos}
-  paginaActual={paginaActual}
-  establecerPaginaActual={establecerPaginaActual}
-/>
-</>
+        </thead>
+        <tbody>
+          {usuarios.map((usuario) => (
+            <tr key={usuario.id_usuario}>
+              <td>{usuario.id_usuario}</td>
+              <td>{usuario.usuario}</td>
+              <td>{usuario.contraseña}</td>
+              <td>
+                <Button
+                  variant="outline-warning"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => abrirModalEdicion(usuario)}
+                >
+                  <i className="bi bi-pencil"></i>
+                </Button>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => abrirModalEliminacion(usuario)}
+                >
+                  <i className="bi bi-trash"></i>
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+      <Paginacion
+        elementosPorPagina={elementosPorPagina}
+        totalElementos={totalElementos}
+        paginaActual={paginaActual}
+        establecerPaginaActual={establecerPaginaActual}
+      />
+    </>
   );
 };
 
-// Exportación del componente
 export default TablaUsuarios;
