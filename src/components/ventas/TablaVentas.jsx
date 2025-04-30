@@ -1,9 +1,9 @@
 // Importaciones necesarias para el componente visual
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const TablaVentas = ({ ventas, cargando, error }) => {
+const TablaVentas = ({ ventas, cargando, error, obtenerDetalles, abrirModalEliminacion }) => {
   if (cargando) {
     return <div>Cargando ventas...</div>; // Muestra mensaje mientras carga
   }
@@ -17,28 +17,38 @@ const TablaVentas = ({ ventas, cargando, error }) => {
       <thead className="table-dark">
         <tr>
           <th>ID Venta</th>
-          <th>ID Detalle</th>
           <th>Fecha Venta</th>
           <th>Cliente</th>
           <th>Empleado</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio Unitario</th>
-          <th>Subtotal</th>
+          <th>Total</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         {ventas.map((venta) => (
-          <tr key={`${venta.id_venta}-${venta.id_detalle_venta}`}> {/* GENERA UNA CLAVE ÚNICA USANDO ID_VENTA Y ID_DETALLE_VENTA */}
+          <tr key={`${venta.id_venta}`}>
             <td>{venta.id_venta}</td>
-            <td>{venta.id_detalle_venta}</td>
             <td>{venta.fecha_venta}</td>
-            <td>{venta.nombre_cliente}</td> {/* MUESTRA EL NOMBRE DEL CLIENTE ASOCIADO A LA VENTA */}
-            <td>{venta.nombre_empleado}</td> {/* MUESTRA EL NOMBRE DEL EMPLEADO QUE REGISTRÓ LA VENTA */}
-            <td>{venta.nombre_producto}</td> {/* MUESTRA EL NOMBRE DEL PRODUCTO VENDIDO */}
-            <td>{venta.cantidad}</td> {/* MUESTRA LA CANTIDAD DE PRODUCTOS VENDIDOS */}
-            <td>C$ {venta.precio_unitario.toFixed(2)}</td> {/* FORMATEA EL PRECIO UNITARIO A DOS DECIMALES */}
-            <td>C$ {venta.subtotal.toFixed(2)}</td> {/* CALCULA Y MUESTRA EL SUBTOTAL DE LA VENTA */}
+            <td>{venta.nombre_cliente}</td>
+            <td>{venta.nombre_empleado}</td>
+            <td>C$ {venta.total_venta.toFixed(2)}</td>
+            <td>
+              <Button
+                variant="outline-success"
+                size="sm"
+                className="me-2"
+                onClick={() => obtenerDetalles(venta.id_venta)}
+              >
+                <i className="bi bi-list-ul"></i>
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => abrirModalEliminacion(venta)}
+              >
+                <i className="bi bi-trash"></i>
+              </Button>
+            </td>
           </tr>
         ))}
       </tbody>
