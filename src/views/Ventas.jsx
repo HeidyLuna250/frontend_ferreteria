@@ -4,6 +4,7 @@ import TablaVentas from '../components/ventas/TablaVentas'; // Importa el compon
 import ModalDetallesVenta from '../components/detalles_ventas/ModalDetallesVenta';
 import ModalEliminacionVenta from '../components/ventas/ModalEliminacionVenta';
 import ModalRegistroVenta from '../components/ventas/ModalRegistroVenta';
+import ModalActualizacionVenta from '../components/ventas/ModalActualizacionVenta';
 import { Container, Button, Row, Col } from "react-bootstrap";
 
 // Declaración del componente Ventas
@@ -33,6 +34,10 @@ const Ventas = () => {
   });
   const [detallesNuevos, setDetallesNuevos] = useState([]);
 
+  const [mostrarModalActualizacion, setMostrarModalActualizacion] = useState(false);
+  const [ventaAEditar, setVentaAEditar] = useState(null);
+  const [detallesEditados, setDetallesEditados] = useState([]);
+
   // Lógica de obtención de datos con useEffect
   useEffect(() => {
     obtenerVentas();
@@ -56,7 +61,6 @@ const Ventas = () => {
     }
   };
   
-
   const eliminarVenta = async () => {
     if (!ventaAEliminar) return;
   
@@ -178,6 +182,59 @@ const Ventas = () => {
     }
   };
 
+  const actualizarVenta = async (ventaActualizada, detalles) => {
+    if (!ventaActualizada.id_cliente || !ventaActualizada.id_empleado || !ventaActualizada.fecha_venta || detalles.length === 0) {
+      setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
+      return;
+    }
+    try {
+      const ventaData = {
+        id_venta: ventaActualizada.id_venta,
+        id_cliente: ventaActualizada.id_cliente,
+        id_empleado: ventaActualizada.id_empleado,
+        fecha_venta: ventaActualizada.fecha_venta.toISOString(),
+        total_venta: detalles.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
+        detalles
+      };
+      console.log(`Enviando ID venta: ${ventaActualizada.id_venta}`, JSON.stringify(ventaData));
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarventa/${ventaActualizada.id_venta}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ventaData)
+      });
+      if (!respuesta.ok) throw new Error('Error al actualizar la venta');
+      await obtenerVentas();
+      setMostrarModalActualizacion(false);
+      setVentaAEditar(null);
+      setDetallesEditados([]);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalActualizacion = async (venta) => {
+    setVentaAEditar({
+      id_venta: venta.id_venta,
+      id_cliente: venta.id_cliente || '',
+      id_empleado: venta.id_empleado || '',
+      fecha_venta: venta.fecha_venta ? new Date(venta.fecha_venta.split('/').reverse().join('-')) : new Date(),
+      total_venta: parseFloat(venta.total_venta) || 0
+    });
+    setCargandoDetalles(true);
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/obtenerdetallesventa/${venta.id_venta}`);
+      if (!respuesta.ok) throw new Error('Error al cargar los detalles de la venta');
+      const datos = await respuesta.json();
+      setDetallesEditados(datos);
+      setCargandoDetalles(false);
+      setMostrarModalActualizacion(true);
+    } catch (error) {
+      setErrorDetalles(error.message);
+      setCargandoDetalles(false);
+    }
+  };
+
   // Renderizado de la vista
   return (
     <>
@@ -200,6 +257,7 @@ const Ventas = () => {
           error={errorCarga}
           obtenerDetalles={obtenerDetalles} // Pasar la función
           abrirModalEliminacion={abrirModalEliminacion}
+          abrirModalActualizacion={abrirModalActualizacion}
         />
 
         <ModalDetallesVenta
@@ -216,22 +274,33 @@ const Ventas = () => {
           eliminarVenta={eliminarVenta}
         />
 
-<ModalRegistroVenta
-  mostrarModal={mostrarModalRegistro}
-  setMostrarModal={setMostrarModalRegistro}
-  nuevaVenta={nuevaVenta}
-  setNuevaVenta={setNuevaVenta}
-  detallesVenta={detallesNuevos}
-  setDetallesVenta={setDetallesNuevos}
-  agregarDetalle={agregarDetalle}
-  agregarVenta={agregarVenta}
-  errorCarga={errorCarga}
-  clientes={clientes}
-  empleados={empleados}
-  productos={productos}
-/>
+        <ModalRegistroVenta
+          mostrarModal={mostrarModalRegistro}
+          setMostrarModal={setMostrarModalRegistro}
+          nuevaVenta={nuevaVenta}
+          setNuevaVenta={setNuevaVenta}
+          detallesVenta={detallesNuevos}
+          setDetallesVenta={setDetallesNuevos}
+          agregarDetalle={agregarDetalle}
+          agregarVenta={agregarVenta}
+          errorCarga={errorCarga}
+          clientes={clientes}
+          empleados={empleados}
+          productos={productos}
+        />
 
-
+        <ModalActualizacionVenta
+          mostrarModal={mostrarModalActualizacion}
+          setMostrarModal={setMostrarModalActualizacion}
+          venta={ventaAEditar}
+          detallesVenta={detallesEditados}
+          setDetallesVenta={setDetallesEditados}
+          actualizarVenta={actualizarVenta}
+          errorCarga={errorCarga}
+          clientes={clientes}
+          empleados={empleados}
+          productos={productos}
+        />
       </Container>
     </>
   );
