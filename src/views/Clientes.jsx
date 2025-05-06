@@ -1,17 +1,15 @@
-// Importaciones necesarias para la vista
 import React, { useState, useEffect } from 'react';
-import TablaClientes from '../components/clientes/TablaClientes.jsx'; // Ajustado para clientes
-import ModalRegistroCliente from '../components/clientes/ModalRegistroCliente.jsx'; // Ajustado para clientes
-import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
+import TablaClientes from '../components/clientes/TablaClientes';
+import ModalRegistroCliente from '../components/clientes/ModalRegistroCliente';
+import ModalEliminacionCliente from '../components/clientes/ModalEliminacionCliente';
+import ModalEdicionCliente from '../components/clientes/ModalEdicionCliente';
+import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
 import { Container, Button, Row, Col } from "react-bootstrap";
 
-// Declaración del componente Clientes
 const Clientes = () => {
-  // Estados para manejar los datos, carga y errores
-  const [listaClientes, setListaClientes] = useState([]); // Almacena los datos de la API
-  const [cargando, setCargando] = useState(true);        // Controla el estado de carga
-  const [errorCarga, setErrorCarga] = useState(null);    // Maneja errores de la petición
-
+  const [listaClientes, setListaClientes] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [errorCarga, setErrorCarga] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoCliente, setNuevoCliente] = useState({
     primer_nombre: '',
@@ -22,16 +20,19 @@ const Clientes = () => {
     direccion: '',
     cedula: ''
   });
-  
+  const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
+  const [clienteAEliminar, setClienteAEliminar] = useState(null);
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
-
   const [paginaActual, establecerPaginaActual] = useState(1);
-  const elementosPorPagina = 4; // Número de elementos por página
-  
+  const elementosPorPagina = 3;
+  const [clienteEditado, setClienteEditado] = useState(null);
+  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+
   const obtenerClientes = async () => {
     try {
-      const respuesta = await fetch('http://localhost:3000/api/clientes'); // Ajusta la ruta API
+      setCargando(true);
+      const respuesta = await fetch('http://localhost:3000/api/clientes');
       if (!respuesta.ok) {
         throw new Error('Error al cargar los clientes');
       }
@@ -43,31 +44,37 @@ const Clientes = () => {
       setErrorCarga(error.message);
       setCargando(false);
     }
-  }; 
+  };
 
-  // Lógica de obtención de datos con useEffect
   useEffect(() => {
     obtenerClientes();
-  }, []); 
+  }, []);
 
-  // Maneja los cambios en los inputs del modal
   const manejarCambioInput = (e) => {
     const { name, value } = e.target;
     setNuevoCliente(prev => ({
       ...prev,
       [name]: value
     }));
-  };                          
+  };
 
-  // Manejo la inserción de un nuevo cliente
+  const manejarCambioInputEdicion = (e) => {
+    const { name, value } = e.target;
+    setClienteEditado(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const agregarCliente = async () => {
-    if (!nuevoCliente.primer_nombre || !nuevoCliente.primer_apellido || !nuevoCliente.celular || !nuevoCliente.cedula) {
-      setErrorCarga("Por favor, completa los campos obligatorios (primer nombre, primer apellido, celular y cédula).");
+    if (!nuevoCliente.primer_nombre || !nuevoCliente.primer_apellido || 
+        !nuevoCliente.celular || !nuevoCliente.cedula) {
+      setErrorCarga("Por favor, completa todos los campos obligatorios antes de guardar.");
       return;
     }
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/registrarcliente', { // Ajusta la ruta API
+      const respuesta = await fetch('http://localhost:3000/api/registrarcliente', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +86,7 @@ const Clientes = () => {
         throw new Error('Error al agregar el cliente');
       }
 
-      await obtenerClientes(); // Refresca la lista desde el servidor
+      await obtenerClientes();
       setNuevoCliente({
         primer_nombre: '',
         segundo_nombre: '',
@@ -99,7 +106,8 @@ const Clientes = () => {
   const manejarCambioBusqueda = (e) => {
     const texto = e.target.value.toLowerCase();
     setTextoBusqueda(texto);
-    
+    establecerPaginaActual(1);
+
     const filtrados = listaClientes.filter(
       (cliente) =>
         cliente.primer_nombre.toLowerCase().includes(texto) ||
@@ -107,19 +115,87 @@ const Clientes = () => {
         cliente.primer_apellido.toLowerCase().includes(texto) ||
         (cliente.segundo_apellido && cliente.segundo_apellido.toLowerCase().includes(texto)) ||
         cliente.celular.toLowerCase().includes(texto) ||
-        cliente.direccion.toLowerCase().includes(texto) ||
+        (cliente.direccion && cliente.direccion.toLowerCase().includes(texto)) ||
         cliente.cedula.toLowerCase().includes(texto)
     );
     setClientesFiltrados(filtrados);
   };
 
-  // Calcular elementos paginados
-const clientesPaginados = clientesFiltrados.slice(
-  (paginaActual - 1) * elementosPorPagina,
-  paginaActual * elementosPorPagina
-);
+  const eliminarCliente = async () => {
+    if (!clienteAEliminar) return;
 
-  // Renderizado de la vista
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/eliminarcliente/${clienteAEliminar.id_cliente}`, {
+        method: 'DELETE',
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al eliminar el cliente');
+      }
+
+      await obtenerClientes();
+      setMostrarModalEliminacion(false);
+      establecerPaginaActual(1);
+      setClienteAEliminar(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalEliminacion = (cliente) => {
+    setClienteAEliminar(cliente);
+    setMostrarModalEliminacion(true);
+  };
+
+  const abrirModalEdicion = (cliente) => {
+    setClienteEditado(cliente);
+    setMostrarModalEdicion(true);
+  };
+
+  const actualizarCliente = async () => {
+    if (!clienteEditado?.primer_nombre || !clienteEditado?.primer_apellido || 
+        !clienteEditado?.celular || !clienteEditado?.cedula) {
+      setErrorCarga("Por favor, completa todos los campos obligatorios antes de guardar.");
+      return;
+    }
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarcliente/${clienteEditado.id_cliente}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          primer_nombre: clienteEditado.primer_nombre,
+          segundo_nombre: clienteEditado.segundo_nombre,
+          primer_apellido: clienteEditado.primer_apellido,
+          segundo_apellido: clienteEditado.segundo_apellido,
+          celular: clienteEditado.celular,
+          direccion: clienteEditado.direccion,
+          cedula: clienteEditado.cedula,
+        }),
+      });
+      
+
+      if (!respuesta.ok) {
+        throw new Error('Error al actualizar el cliente');
+      }
+
+      await obtenerClientes();
+      setMostrarModalEdicion(false);
+      setClienteEditado(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const clientesPaginados = clientesFiltrados.slice(
+    (paginaActual - 1) * elementosPorPagina,
+    paginaActual * elementosPorPagina
+  );
+
   return (
     <>
       <Container className="mt-5">
@@ -128,33 +204,30 @@ const clientesPaginados = clientesFiltrados.slice(
 
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
-            <Button 
-              variant="primary"
-              onClick={() => setMostrarModal(true)}
-              style={{width: "100%"}}
-            >
+            <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
               Nuevo Cliente
             </Button>
           </Col>
-          
-          <Col lg={6} md={8} sm={8} xs={7}>
+          <Col lg={5} md={8} sm={8} xs={7}>
             <CuadroBusquedas
               textoBusqueda={textoBusqueda}
               manejarCambioBusqueda={manejarCambioBusqueda}
             />
           </Col>
-        </Row> 
+        </Row>
 
-        <br/>
+        <br/><br/>
 
-        <TablaClientes 
-          clientes={clientesPaginados} 
-          cargando={cargando} 
-          error={errorCarga}   
-          totalElementos={listaClientes.length} // Total de elementos
-          elementosPorPagina={elementosPorPagina} // Elementos por página
-          paginaActual={paginaActual} // Página actual
-          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
+        <TablaClientes
+          clientes={clientesPaginados}
+          cargando={cargando}
+          error={errorCarga}
+          totalElementos={listaClientes.length}
+          elementosPorPagina={elementosPorPagina}
+          paginaActual={paginaActual}
+          establecerPaginaActual={establecerPaginaActual}
+          abrirModalEliminacion={abrirModalEliminacion}
+          abrirModalEdicion={abrirModalEdicion}
         />
 
         <ModalRegistroCliente
@@ -165,10 +238,24 @@ const clientesPaginados = clientesFiltrados.slice(
           agregarCliente={agregarCliente}
           errorCarga={errorCarga}
         />
+
+        <ModalEliminacionCliente
+          mostrarModalEliminacion={mostrarModalEliminacion}
+          setMostrarModalEliminacion={setMostrarModalEliminacion}
+          eliminarCliente={eliminarCliente}
+        />
+
+        <ModalEdicionCliente
+          mostrarModalEdicion={mostrarModalEdicion}
+          setMostrarModalEdicion={setMostrarModalEdicion}
+          clienteEditado={clienteEditado}
+          manejarCambioInputEdicion={manejarCambioInputEdicion}
+          actualizarCliente={actualizarCliente}
+          errorCarga={errorCarga}
+        />
       </Container>
     </>
   );
 };
 
-// Exportación del componente
 export default Clientes;

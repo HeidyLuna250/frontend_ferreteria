@@ -1,18 +1,18 @@
 import React from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 
-const ModalEdicionEmpleado = ({
+const ModalEdicionCliente = ({
   mostrarModalEdicion,
   setMostrarModalEdicion,
-  empleadoEditado,
+  clienteEditado,
   manejarCambioInputEdicion,
-  actualizarEmpleado,
+  actualizarCliente,
   errorCarga,
 }) => {
   return (
     <Modal show={mostrarModalEdicion} onHide={() => setMostrarModalEdicion(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>Editar Empleado</Modal.Title>
+        <Modal.Title>Editar Cliente</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -21,7 +21,7 @@ const ModalEdicionEmpleado = ({
             <Form.Control
               type="text"
               name="primer_nombre"
-              value={empleadoEditado?.primer_nombre || ""}
+              value={clienteEditado?.primer_nombre || ""}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el primer nombre (máx. 20 caracteres)"
               maxLength={20}
@@ -33,7 +33,7 @@ const ModalEdicionEmpleado = ({
             <Form.Control
               type="text"
               name="segundo_nombre"
-              value={empleadoEditado?.segundo_nombre || ""}
+              value={clienteEditado?.segundo_nombre || ""}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el segundo nombre (máx. 20 caracteres)"
               maxLength={20}
@@ -44,7 +44,7 @@ const ModalEdicionEmpleado = ({
             <Form.Control
               type="text"
               name="primer_apellido"
-              value={empleadoEditado?.primer_apellido || ""}
+              value={clienteEditado?.primer_apellido || ""}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el primer apellido (máx. 20 caracteres)"
               maxLength={20}
@@ -56,7 +56,7 @@ const ModalEdicionEmpleado = ({
             <Form.Control
               type="text"
               name="segundo_apellido"
-              value={empleadoEditado?.segundo_apellido || ""}
+              value={clienteEditado?.segundo_apellido || ""}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el segundo apellido (máx. 20 caracteres)"
               maxLength={20}
@@ -67,30 +67,34 @@ const ModalEdicionEmpleado = ({
             <Form.Control
               type="text"
               name="celular"
-              value={empleadoEditado?.celular || ""}
+              value={clienteEditado?.celular || ""}
               onChange={manejarCambioInputEdicion}
-              placeholder="Ingresa el número de celular (máx. 12 caracteres)"
-              maxLength={12}
+              placeholder="Ingresa el número de celular (8 dígitos)"
+              maxLength={8}
+              required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formCargo">
-            <Form.Label>Cargo</Form.Label>
+          <Form.Group className="mb-3" controlId="formDireccion">
+            <Form.Label>Dirección</Form.Label>
             <Form.Control
               type="text"
-              name="cargo"
-              value={empleadoEditado?.cargo || ""}
+              name="direccion"
+              value={clienteEditado?.direccion || ""}
               onChange={manejarCambioInputEdicion}
-              placeholder="Ingresa el cargo (máx. 20 caracteres)"
-              maxLength={20}
+              placeholder="Ingresa la dirección (máx. 150 caracteres)"
+              maxLength={150}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formFechaContratacion">
-            <Form.Label>Fecha de Contratación</Form.Label>
+          <Form.Group className="mb-3" controlId="formCedula">
+            <Form.Label>Cédula</Form.Label>
             <Form.Control
-              type="date"
-              name="fecha_contratacion"
-              value={empleadoEditado?.fecha_contratacion || ""}
+              type="text"
+              name="cedula"
+              value={clienteEditado?.cedula || ""}
               onChange={manejarCambioInputEdicion}
+              placeholder="Ingresa la cédula (máx. 14 caracteres)"
+              maxLength={14}
+              required
             />
           </Form.Group>
           {errorCarga && (
@@ -102,7 +106,7 @@ const ModalEdicionEmpleado = ({
         <Button variant="secondary" onClick={() => setMostrarModalEdicion(false)}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={actualizarEmpleado}>
+        <Button variant="primary" onClick={actualizarCliente}>
           Guardar Cambios
         </Button>
       </Modal.Footer>
@@ -110,4 +114,4 @@ const ModalEdicionEmpleado = ({
   );
 };
 
-export default ModalEdicionEmpleado;
+export default ModalEdicionCliente;
