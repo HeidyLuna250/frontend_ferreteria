@@ -35,31 +35,18 @@ const ModalActualizacionVenta = ({
 
   useEffect(() => {
     if (venta && clientes.length > 0 && empleados.length > 0) {
-      const cliente = clientes.find(c => c.id_cliente === parseInt(venta.id_cliente));
-      const empleado = empleados.find(e => e.id_empleado === parseInt(venta.id_empleado));
-      if (cliente) {
-        setClienteSeleccionado({ value: cliente.id_cliente, label: `${cliente.primer_nombre} ${cliente.primer_apellido}` });
-        setVentaActualizada(prev => ({ ...prev, id_cliente: cliente.id_cliente }));
-      }
-      if (empleado) {
-        setEmpleadoSeleccionado({ value: empleado.id_empleado, label: `${empleado.primer_nombre} ${empleado.primer_apellido}` });
-        setVentaActualizada(prev => ({ ...prev, id_empleado: empleado.id_empleado }));
-      }
-      let fechaParsed = new Date(venta.fecha_venta);
-      if (isNaN(fechaParsed) && typeof venta.fecha_venta === 'string') {
-        const [day, month, year] = venta.fecha_venta.split('/');
-        fechaParsed = new Date(`${year}-${month}-${day}`);
-      }
-      setVentaActualizada(prev => ({
-        ...prev,
+      setClienteSeleccionado({ value: venta.id_cliente, label: venta.nombre_cliente });
+      setEmpleadoSeleccionado({ value: venta.id_empleado, label: venta.nombre_empleado });
+      setVentaActualizada({
         id_venta: venta.id_venta || '',
-        fecha_venta: isNaN(fechaParsed) ? new Date() : fechaParsed,
+        id_cliente: venta.id_cliente || '',
+        id_empleado: venta.id_empleado || '',
+        fecha_venta: venta?.fecha_venta ? new Date(venta.fecha_venta) : new Date(),
         total_venta: parseFloat(venta.total_venta) || 0
-      }));
+      });
     }
   }, [venta, clientes, empleados]);
-
-
+  
   // Cargar opciones para AsyncSelect
   const cargarClientes = (inputValue, callback) => {
     const filtrados = clientes.filter(cliente =>

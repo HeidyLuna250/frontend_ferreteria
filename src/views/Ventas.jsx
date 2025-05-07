@@ -159,7 +159,7 @@ const Ventas = () => {
       const ventaData = {
         id_cliente: nuevaVenta.id_cliente,
         id_empleado: nuevaVenta.id_empleado,
-        fecha_venta: nuevaVenta.fecha_venta.toISOString(),
+        fecha_venta: nuevaVenta.fecha_venta.toLocaleString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', ' '),
         total_venta: detallesNuevos.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
         detalles: detallesNuevos
       };
@@ -183,16 +183,17 @@ const Ventas = () => {
   };
 
   const actualizarVenta = async (ventaActualizada, detalles) => {
+
     if (!ventaActualizada.id_cliente || !ventaActualizada.id_empleado || !ventaActualizada.fecha_venta || detalles.length === 0) {
       setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
       return;
     }
-    try {
+    try {      
       const ventaData = {
         id_venta: ventaActualizada.id_venta,
         id_cliente: ventaActualizada.id_cliente,
         id_empleado: ventaActualizada.id_empleado,
-        fecha_venta: ventaActualizada.fecha_venta.toISOString(),
+        fecha_venta: ventaActualizada.fecha_venta.toLocaleString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', ' '),
         total_venta: detalles.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
         detalles
       };
@@ -214,19 +215,30 @@ const Ventas = () => {
   };
 
   const abrirModalActualizacion = async (venta) => {
-    setVentaAEditar({
-      id_venta: venta.id_venta,
-      id_cliente: venta.id_cliente || '',
-      id_empleado: venta.id_empleado || '',
-      fecha_venta: venta.fecha_venta ? new Date(venta.fecha_venta.split('/').reverse().join('-')) : new Date(),
-      total_venta: parseFloat(venta.total_venta) || 0
-    });
     setCargandoDetalles(true);
     try {
+      const respuestaventa = await fetch(`http://localhost:3000/api/obtenerventaporid/${venta.id_venta}`);
+      if (!respuestaventa.ok) throw new Error('Error al cargar la venta');
+      const datosventa = await respuestaventa.json();
+  
+      
+      const datoscompletos = {
+        id_venta: datosventa.id_venta,
+        id_cliente: datosventa.id_cliente,
+        id_empleado: datosventa.id_empleado,
+        fecha_venta: datosventa.fecha_venta,
+        total_venta: datosventa.total_venta,
+        nombre_cliente: venta.nombre_cliente,
+        nombre_empleado: venta.nombre_empleado
+      };
+      
+      setVentaAEditar(datoscompletos);
+  
       const respuesta = await fetch(`http://localhost:3000/api/obtenerdetallesventa/${venta.id_venta}`);
       if (!respuesta.ok) throw new Error('Error al cargar los detalles de la venta');
       const datos = await respuesta.json();
       setDetallesEditados(datos);
+  
       setCargandoDetalles(false);
       setMostrarModalActualizacion(true);
     } catch (error) {
