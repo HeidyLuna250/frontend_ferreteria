@@ -4,12 +4,14 @@ import ModalRegistroUsuario from '../components/usuarios/ModalRegistroUsuario.js
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
 import ModalEliminacionUsuario from '../components/usuarios/ModalEliminacionUsuario.jsx';
 import ModalEdicionUsuario from '../components/usuarios/ModalEdicionUsuario.jsx';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 const Usuarios = () => {
   const [listaUsuarios, setListaUsuarios] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
+
+  const [mensajeExito, setMensajeExito] = useState(null); // Estado para mostrar mensaje de confirmación
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoUsuario, setNuevoUsuario] = useState({
@@ -88,6 +90,8 @@ const Usuarios = () => {
       setNuevoUsuario({ usuario: '', contraseña: '' });
       setMostrarModal(false);
       setErrorCarga(null);
+      setMensajeExito('Usuario registrado correctamente😉'); //Mensaje de confirmación
+      setTimeout(() => setMensajeExito(null), 3000);
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -127,6 +131,8 @@ const Usuarios = () => {
       establecerPaginaActual(1);
       setUsuarioAEliminar(null);
       setErrorCarga(null);
+      setMensajeExito('Usuario eliminado correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
       console.error('Error detallado:', error);
@@ -166,6 +172,8 @@ const Usuarios = () => {
       setMostrarModalEdicion(false);
       setUsuarioEditado(null);
       setErrorCarga(null);
+      setMensajeExito('Usuario Actualizado correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
       console.error('Error detallado:', error);
@@ -182,7 +190,11 @@ const Usuarios = () => {
       <Container className="mt-5">
         <br />
         <h4>Usuarios</h4>
-
+        {mensajeExito && ( //para que este visible en pantalla la confirmación
+          <Alert variant="success" onClose={() => setMensajeExito(null)} dismissible>
+            {mensajeExito}
+          </Alert>
+        )}
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
             <Button 

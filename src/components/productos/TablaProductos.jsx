@@ -1,6 +1,6 @@
 // Importaciones necesarias para el componente visual
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import Paginacion from "../ordenamiento/Paginacion";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -13,6 +13,8 @@ const TablaProductos = ({
   elementosPorPagina,
   paginaActual,
   establecerPaginaActual,
+  abrirModalEliminacion,
+  abrirModalEdicion,
   categorias // Nueva prop para las categorías
 }) => {
 
@@ -42,6 +44,7 @@ const TablaProductos = ({
             <th>Categoría</th> {/* Cambiado el encabezado de "ID Categoría" a "Categoría" */}
             <th>Precio</th>
             <th>Stock</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -53,6 +56,23 @@ const TablaProductos = ({
               <td>{obtenerNombreCategoria(producto.id_categoria)}</td> {/* Mostrar nombre en lugar de ID */}
               <td>{producto.precio_unitario}</td>
               <td>{producto.stock}</td>
+              <td>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => abrirModalEliminacion(producto)}
+                >
+                  <i className="bi bi-trash"></i>
+                </Button>
+                <Button
+                  variant="outline-warning"
+                  size="sm"
+                  onClick={() => abrirModalEdicion(producto)}
+                >
+                  <i className="bi bi-pencil"></i>
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>

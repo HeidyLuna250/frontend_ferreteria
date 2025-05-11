@@ -5,7 +5,7 @@ import ModalDetallesVenta from '../components/detalles_ventas/ModalDetallesVenta
 import ModalEliminacionVenta from '../components/ventas/ModalEliminacionVenta';
 import ModalRegistroVenta from '../components/ventas/ModalRegistroVenta';
 import ModalActualizacionVenta from '../components/ventas/ModalActualizacionVenta';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 // Declaración del componente Ventas
 const Ventas = () => {
@@ -13,6 +13,8 @@ const Ventas = () => {
   const [listaVentas, setListaVentas] = useState([]); // Almacena los datos de la API
   const [cargando, setCargando] = useState(true);     // Controla el estado de carga
   const [errorCarga, setErrorCarga] = useState(null); // Maneja errores de la petición
+
+  const [mensajeExito, setMensajeExito] = useState(null); // Estado para mostrar mensaje de confirmación
 
   const [mostrarModal, setMostrarModal] = useState(false); // Estado para el modal
   const [detallesVenta, setDetallesVenta] = useState([]); // Estado para los detalles
@@ -77,17 +79,17 @@ const Ventas = () => {
       await obtenerVentas();
       setVentaAEliminar(null);
       setErrorCarga(null);
+      setMensajeExito('Venta eliminada correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
     }
   };
   
-
   const abrirModalEliminacion = (venta) => {
     setVentaAEliminar(venta);
     setMostrarModalEliminacion(true);
   };
-  
 
   // Función para obtener detalles de una venta
   const obtenerDetalles = async (id_venta) => {
@@ -177,6 +179,8 @@ const Ventas = () => {
       setDetallesNuevos([]);
       setMostrarModalRegistro(false);
       setErrorCarga(null);
+      setMensajeExito('Venta registrada correctamente😉'); //Mensaje de confirmación
+      setTimeout(() => setMensajeExito(null), 3000);
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -209,6 +213,8 @@ const Ventas = () => {
       setVentaAEditar(null);
       setDetallesEditados([]);
       setErrorCarga(null);
+      setMensajeExito('Venta Actualizada correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -247,20 +253,25 @@ const Ventas = () => {
     }
   };
 
-  // Renderizado de la vista
-  return (
-    <>
-      <Container className="mt-5">
-        <br />
-        <h4>Ventas con Detalles</h4>
-        <Row>
-  <Col lg={2} md={4} sm={4} xs={5}>
-    <Button variant="primary" onClick={() => setMostrarModalRegistro(true)} style={{ width: "100%" }}>
-      Nueva Venta
-    </Button>
-  </Col>
-</Row>
-<br />
+        // Renderizado de la vista
+        return (
+          <>
+            <Container className="mt-5">
+              <br />
+              <h4>Ventas con Detalles</h4>
+              {mensajeExito && ( //para que este visible en pantalla la confirmación
+              <Alert variant="success" onClose={() => setMensajeExito(null)} dismissible>
+                {mensajeExito}
+                </Alert>
+                  )}
+              <Row>
+              <Col lg={2} md={4} sm={4} xs={5}>
+                <Button variant="primary" onClick={() => setMostrarModalRegistro(true)} style={{ width: "100%" }}>
+                  Nueva Venta
+                </Button>
+              </Col>
+            </Row>
+            <br />
 
         {/* Pasa los estados como props al componente TablaVentas */}
         <TablaVentas

@@ -4,7 +4,7 @@ import ModalRegistroEmpleado from '../components/empleados/ModalRegistroEmpleado
 import ModalEliminacionEmpleado from '../components/empleados/ModalEliminacionEmpleado';
 import ModalEdicionEmpleado from '../components/empleados/ModalEdicionEmpleado';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 // Declaración del componente Empleados
 const Empleados = () => {
@@ -12,6 +12,8 @@ const Empleados = () => {
   const [listaEmpleados, setListaEmpleados] = useState([]); // Almacena los datos de la API
   const [cargando, setCargando] = useState(true);          // Controla el estado de carga
   const [errorCarga, setErrorCarga] = useState(null);      // Maneja errores de la petición
+
+  const [mensajeExito, setMensajeExito] = useState(null); // Estado para mostrar mensaje de confirmación
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoEmpleado, setNuevoEmpleado] = useState({
@@ -104,6 +106,8 @@ const Empleados = () => {
       });
       setMostrarModal(false);
       setErrorCarga(null);
+      setMensajeExito('Empleado registrado correctamente😉'); //Mensaje de confirmación
+      setTimeout(() => setMensajeExito(null), 3000);
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -144,6 +148,8 @@ const Empleados = () => {
       establecerPaginaActual(1);
       setEmpleadoAEliminar(null);
       setErrorCarga(null);
+      setMensajeExito('Empleado eliminado correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -183,6 +189,8 @@ const Empleados = () => {
       setMostrarModalEdicion(false);
       setEmpleadoEditado(null);
       setErrorCarga(null);
+      setMensajeExito('Empleado Actualizado correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -198,7 +206,11 @@ const Empleados = () => {
       <Container className="mt-5">
         <br />
         <h4>Empleados</h4>
-
+        {mensajeExito && ( //para que este visible en pantalla la confirmación
+          <Alert variant="success" onClose={() => setMensajeExito(null)} dismissible>
+            {mensajeExito}
+          </Alert>
+        )}
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
             <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>

@@ -1,19 +1,19 @@
 import React from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 
-const ModalRegistroProducto = ({
-  mostrarModal,
-  setMostrarModal,
-  nuevoProducto,
-  manejarCambioInput,
-  agregarProducto,
+const ModalEdicionProducto = ({
+  mostrarModalEdicion,
+  setMostrarModalEdicion,
+  productoEditado,
+  manejarCambioInputEdicion,
+  actualizarProducto,
   errorCarga,
-  categorias // Lista de categorías obtenidas
+  categorias // Recibimos la lista de categorías como prop
 }) => {
   return (
-    <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
+    <Modal show={mostrarModalEdicion} onHide={() => setMostrarModalEdicion(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>Agregar Nuevo Producto</Modal.Title>
+        <Modal.Title>Editar Producto</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -22,9 +22,9 @@ const ModalRegistroProducto = ({
             <Form.Control
               type="text"
               name="nombre_producto"
-              value={nuevoProducto.nombre_producto}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa el nombre (máx. 20 caracteres)"
+              value={productoEditado?.nombre_producto || ""}
+              onChange={manejarCambioInputEdicion}
+              placeholder="Nombre del producto (máx. 20 caracteres)"
               maxLength={20}
               required
             />
@@ -36,83 +36,82 @@ const ModalRegistroProducto = ({
               as="textarea"
               rows={3}
               name="descripcion_producto"
-              value={nuevoProducto.descripcion_producto}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa la descripción (máx. 100 caracteres)"
+              value={productoEditado?.descripcion_producto || ""}
+              onChange={manejarCambioInputEdicion}
+              placeholder="Descripción del producto (máx. 100 caracteres)"
               maxLength={100}
             />
           </Form.Group>
 
+          {/* 🆕 Sustituimos el input de número por un select con nombre de categoría */}
           <Form.Group className="mb-3" controlId="formCategoriaProducto">
             <Form.Label>Categoría</Form.Label>
             <Form.Select
               name="id_categoria"
-              value={nuevoProducto.id_categoria}
-              onChange={manejarCambioInput}
+              value={productoEditado?.id_categoria || ""}
+              onChange={manejarCambioInputEdicion}
               required
             >
               <option value="">Selecciona una categoría</option>
               {categorias.map((categoria) => (
                 <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                  {categoria.nombre_categoria} {/* Ya estás mostrando el nombre correctamente aquí */}
+                  {categoria.nombre_categoria}
                 </option>
               ))}
             </Form.Select>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formPrecioProducto">
+          <Form.Group className="mb-3" controlId="formPrecioUnitario">
             <Form.Label>Precio Unitario</Form.Label>
             <Form.Control
               type="number"
               name="precio_unitario"
-              value={nuevoProducto.precio_unitario}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa el precio"
+              value={productoEditado?.precio_unitario || ""}
+              onChange={manejarCambioInputEdicion}
+              placeholder="Precio unitario"
               step="0.01"
-              min="0"
               required
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formStockProducto">
+          <Form.Group className="mb-3" controlId="formStock">
             <Form.Label>Stock</Form.Label>
             <Form.Control
               type="number"
               name="stock"
-              value={nuevoProducto.stock}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa la cantidad en stock"
-              min="0"
+              value={productoEditado?.stock || ""}
+              onChange={manejarCambioInputEdicion}
+              placeholder="Cantidad en stock"
               required
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formImagenProducto">
-            <Form.Label>Imagen (URL)</Form.Label>
+          <Form.Group className="mb-3" controlId="formImagen">
+            <Form.Label>Imagen (URL o base64)</Form.Label>
             <Form.Control
               type="text"
               name="imagen"
-              value={nuevoProducto.imagen}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa la URL de la imagen (opcional)"
+              value={productoEditado?.imagen || ""}
+              onChange={manejarCambioInputEdicion}
+              placeholder="URL o base64 de la imagen"
             />
           </Form.Group>
-
+          
           {errorCarga && (
             <div className="text-danger mt-2">{errorCarga}</div>
           )}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setMostrarModal(false)}>
+        <Button variant="secondary" onClick={() => setMostrarModalEdicion(false)}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={agregarProducto}>
-          Guardar Producto
+        <Button variant="primary" onClick={actualizarProducto}>
+          Guardar Cambios
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default ModalRegistroProducto;
+export default ModalEdicionProducto;

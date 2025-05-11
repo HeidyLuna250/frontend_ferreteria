@@ -11,3 +11,22 @@
 .margen-superior-main {
   margin-top: 60px;
 }
+
+/* Línea superior animada */
+.color-navbar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 3px;
+  background: linear-gradient(90deg, #3a7bd5, #8ac4ff, #3a7bd5);
+  animation: slide 5s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes slide {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+

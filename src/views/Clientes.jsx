@@ -4,12 +4,13 @@ import ModalRegistroCliente from '../components/clientes/ModalRegistroCliente';
 import ModalEliminacionCliente from '../components/clientes/ModalEliminacionCliente';
 import ModalEdicionCliente from '../components/clientes/ModalEdicionCliente';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 const Clientes = () => {
   const [listaClientes, setListaClientes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
+
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoCliente, setNuevoCliente] = useState({
     primer_nombre: '',
@@ -20,12 +21,18 @@ const Clientes = () => {
     direccion: '',
     cedula: ''
   });
+
+  const [mensajeExito, setMensajeExito] = useState(null); // Estado para mostrar mensaje de confirmación
+  
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
   const [clienteAEliminar, setClienteAEliminar] = useState(null);
+
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+
   const [paginaActual, establecerPaginaActual] = useState(1);
-  const elementosPorPagina = 3;
+  const elementosPorPagina = 4;
+
   const [clienteEditado, setClienteEditado] = useState(null);
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
 
@@ -98,6 +105,8 @@ const Clientes = () => {
       });
       setMostrarModal(false);
       setErrorCarga(null);
+      setMensajeExito('Cliente registrado correctamente😉'); //Mensaje de confirmación
+      setTimeout(() => setMensajeExito(null), 3000);
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -138,6 +147,8 @@ const Clientes = () => {
       establecerPaginaActual(1);
       setClienteAEliminar(null);
       setErrorCarga(null);
+      setMensajeExito('Cliente eliminado correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -186,6 +197,8 @@ const Clientes = () => {
       setMostrarModalEdicion(false);
       setClienteEditado(null);
       setErrorCarga(null);
+      setMensajeExito('Cliente Actualizado correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+      setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -201,7 +214,11 @@ const Clientes = () => {
       <Container className="mt-5">
         <br />
         <h4>Clientes</h4>
-
+        {mensajeExito && ( //para que este visible en pantalla la confirmación
+          <Alert variant="success" onClose={() => setMensajeExito(null)} dismissible>
+            {mensajeExito}
+          </Alert>
+        )}
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
             <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>

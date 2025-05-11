@@ -5,7 +5,7 @@ import ModalRegistroCategoria from '../components/categorias/ModalRegistroCatego
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
 import ModalEliminacionCategoria from '../components/categorias/ModalEliminacionCategoria.jsx';
 import ModalEdicionCategoria from '../components/categorias/ModalEdicionCategoria.jsx';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 // Declaración del componente Categorias
 const Categorias = () => {
@@ -13,6 +13,8 @@ const Categorias = () => {
   const [listaCategorias, setListaCategorias] = useState([]); // Almacena los datos de la API
   const [cargando, setCargando] = useState(true);            // Controla el estado de carga
   const [errorCarga, setErrorCarga] = useState(null);        // Maneja errores de la petición
+
+  const [mensajeExito, setMensajeExito] = useState(null); // Estado para mostrar mensaje de confirmación
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevaCategoria, setNuevaCategoria] = useState({
@@ -96,6 +98,8 @@ const Categorias = () => {
     setNuevaCategoria({ nombre_categoria: '', descripcion_categoria: '' });
     setMostrarModal(false);
     setErrorCarga(null);
+    setMensajeExito('Categoria registrada correctamente😉'); //Mensaje de confirmación
+    setTimeout(() => setMensajeExito(null), 3000);
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -120,68 +124,72 @@ const Categorias = () => {
       paginaActual * elementosPorPagina
     );
 
-const eliminarCategoria = async () => {
-  if (!categoriaAEliminar) return;
+    const eliminarCategoria = async () => {
+      if (!categoriaAEliminar) return;
 
-  try {
-    const respuesta = await fetch(`http://localhost:3000/api/eliminarcategoria/${categoriaAEliminar.id_categoria}`, {
-      method: 'DELETE',
-    });
+      try {
+        const respuesta = await fetch(`http://localhost:3000/api/eliminarcategoria/${categoriaAEliminar.id_categoria}`, {
+          method: 'DELETE',
+        });
 
-    if (!respuesta.ok) {
-      throw new Error('Error al eliminar la categoría');
-    }
+        if (!respuesta.ok) {
+          throw new Error('Error al eliminar la categoría');
+        }
 
-    await obtenerCategorias(); // Refresca la lista
-    setMostrarModalEliminacion(false);
-    establecerPaginaActual(1); // Regresa a la primera página
-    setCategoriaAEliminar(null);
-    setErrorCarga(null);
-  } catch (error) {
-    setErrorCarga(error.message);
-  }
-};
+        await obtenerCategorias(); // Refresca la lista
+        setMostrarModalEliminacion(false);
+        establecerPaginaActual(1); // Regresa a la primera página
+        setCategoriaAEliminar(null);
+        setErrorCarga(null);
+        setMensajeExito('Categoria eliminada correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+        setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
+      } catch (error) {
+        setErrorCarga(error.message);
+      }
+    };
 
-const abrirModalEliminacion = (categoria) => {
-  setCategoriaAEliminar(categoria);
-  setMostrarModalEliminacion(true);
-};
+    const abrirModalEliminacion = (categoria) => {
+      setCategoriaAEliminar(categoria);
+      setMostrarModalEliminacion(true);
+    };
 
-const actualizarCategoria = async () => {
-  if (!categoriaEditada?.nombre_categoria || !categoriaEditada?.descripcion_categoria) {
-    setErrorCarga("Por favor, completa todos los campos antes de guardar.");
-    return;
-  }
+    const actualizarCategoria = async () => {
+      if (!categoriaEditada?.nombre_categoria || !categoriaEditada?.descripcion_categoria) {
+        setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+        return;
+      }
 
-  try {
-    const respuesta = await fetch(`http://localhost:3000/api/actualizarcategoria/${categoriaEditada.id_categoria}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        nombre_categoria: categoriaEditada.nombre_categoria,
-        descripcion_categoria: categoriaEditada.descripcion_categoria,
-      }),
-    });
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarcategoria/${categoriaEditada.id_categoria}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre_categoria: categoriaEditada.nombre_categoria,
+          descripcion_categoria: categoriaEditada.descripcion_categoria,
+        }),
+      });
 
-    if (!respuesta.ok) {
-      throw new Error('Error al actualizar la categoría');
-    }
+      if (!respuesta.ok) {
+        throw new Error('Error al actualizar la categoría');
+      }
 
     await obtenerCategorias();
     setMostrarModalEdicion(false);
     setCategoriaEditada(null);
     setErrorCarga(null);
+    setMensajeExito('Categoria Actualizada correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+    setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
   } catch (error) {
     setErrorCarga(error.message);
   }
 };
 
-const abrirModalEdicion = (categoria) => {
-  setCategoriaEditada(categoria);
-  setMostrarModalEdicion(true);
-};
+    const abrirModalEdicion = (categoria) => {
+      setCategoriaEditada(categoria);
+      setMostrarModalEdicion(true);
+    };
 
 
   // Renderizado de la vista
@@ -190,9 +198,12 @@ const abrirModalEdicion = (categoria) => {
       <Container className="mt-5">
         <br />
         <h4>Categorías</h4>
-
+        {mensajeExito && ( //para que este visible en pantalla la confirmación
+          <Alert variant="success" onClose={() => setMensajeExito(null)} dismissible>
+            {mensajeExito}
+          </Alert>
+        )}
         <Row>
-
           <Col lg={2} md={4} sm={4} xs={5}>
             <Button 
               variant="primary"
