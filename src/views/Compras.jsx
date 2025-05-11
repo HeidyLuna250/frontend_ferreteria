@@ -4,6 +4,7 @@ import TablaCompras from '../components/compras/TablaCompras'; // Importa el com
 import ModalDetallesCompra from '../components/detalles_compras/ModalDetallesCompras';
 import ModalEliminacionCompra from '../components/compras/ModalEliminacionCompra';
 import ModalRegistroCompra from '../components/compras/ModalRegistroCompra';
+import ModalActualizacionCompra from '../components/compras/ModalActualizacionCompra';
 import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 // Declaración del componente Compras
@@ -32,6 +33,10 @@ const Compras = () => {
     total_compra: 0
   });
   const [detallesNuevos, setDetallesNuevos] = useState([]);
+
+  const [mostrarModalActualizacion, setMostrarModalActualizacion] = useState(false);
+  const [compraAEditar, setCompraAEditar] = useState(null);
+  const [detallesEditados, setDetallesEditados] = useState([]);
 
   // Lógica de obtención de datos con useEffect
   useEffect(() => {
@@ -140,7 +145,7 @@ const Compras = () => {
     try {
       const compraData = {
         id_empleado: nuevaCompra.id_empleado,
-        fecha_compra: nuevaCompra.fecha_compra.toISOString(),
+        fecha_compra: nuevaCompra.fecha_compra.toLocaleString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', ' '),
         total_compra: detallesNuevos.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
         detalles: detallesNuevos
       };
@@ -164,6 +169,71 @@ const Compras = () => {
       setErrorCarga(error.message);
     }
   };
+
+    const actualizarCompra = async (compraActualizada, detalles) => {
+
+      if (!compraActualizada.id_empleado || !compraActualizada.fecha_compra || detalles.length === 0) {
+        setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
+        return;
+      }
+      try {
+        const compraData = {
+          id_compra: compraActualizada.id_compra,
+          id_empleado: compraActualizada.id_empleado,
+          fecha_compra: compraActualizada.fecha_compra.toLocaleString('en-CA', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false
+          }).replace(',', ' '),
+          total_compra: detalles.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
+          detalles
+        };
+        console.log(`Enviando ID compra: ${compraActualizada.id_compra}`, JSON.stringify(compraData));
+        const respuesta = await fetch(`http://localhost:3000/api/actualizarcompra/${compraActualizada.id_compra}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(compraData)
+        });
+        if (!respuesta.ok) throw new Error('Error al actualizar la compra');
+        await obtenerCompras();
+        setMostrarModalActualizacion(false);
+        setCompraAEditar(null);
+        setDetallesEditados([]);
+        setErrorCarga(null);
+      } catch (error) {
+        setErrorCarga(error.message);
+      }
+    };
+
+const abrirModalActualizacion = async (compra) => {
+  setCargandoDetalles(true);
+  try {
+    const respuestacompra = await fetch(`http://localhost:3000/api/obtenercompraporid/${compra.id_compra}`);
+    if (!respuestacompra.ok) throw new Error('Error al cargar la compra');
+    const datoscompra = await respuestacompra.json();
+
+    const datoscompletos = {
+      id_compra: datoscompra.id_compra,
+      id_empleado: datoscompra.id_empleado,
+      fecha_compra: datoscompra.fecha_compra,
+      total_compra: datoscompra.total_compra,
+      nombre_empleado: compra.nombre_empleado
+    };
+
+    setCompraAEditar(datoscompletos);
+
+    const respuesta = await fetch(`http://localhost:3000/api/obtenerdetallescompra/${compra.id_compra}`);
+    if (!respuesta.ok) throw new Error('Error al cargar los detalles de la compra');
+    const datos = await respuesta.json();
+    setDetallesEditados(datos);
+
+    setCargandoDetalles(false);
+    setMostrarModalActualizacion(true);
+  } catch (error) {
+    setErrorDetalles(error.message);
+    setCargandoDetalles(false);
+  }
+};
 
   // Renderizado de la vista
   return (
@@ -192,6 +262,7 @@ const Compras = () => {
           error={errorCarga}
           obtenerDetalles={obtenerDetalles} // Pasar la función
           abrirModalEliminacion={abrirModalEliminacion}
+          abrirModalActualizacion={abrirModalActualizacion}
         />
 
         <ModalDetallesCompra
@@ -222,6 +293,17 @@ const Compras = () => {
           productos={productos}
         />
 
+        <ModalActualizacionCompra
+          mostrarModal={mostrarModalActualizacion}
+          setMostrarModal={setMostrarModalActualizacion}
+          compra={compraAEditar}
+          detallesCompra={detallesEditados}
+          setDetallesCompra={setDetallesEditados}
+          actualizarCompra={actualizarCompra}
+          errorCarga={errorCarga}
+          empleados={empleados}
+          productos={productos}
+        />
       </Container>
     </>
   );
