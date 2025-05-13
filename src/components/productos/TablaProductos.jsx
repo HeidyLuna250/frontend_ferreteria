@@ -44,6 +44,7 @@ const TablaProductos = ({
             <th>Categoría</th> {/* Cambiado el encabezado de "ID Categoría" a "Categoría" */}
             <th>Precio</th>
             <th>Stock</th>
+            <th>Imagen</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -56,6 +57,15 @@ const TablaProductos = ({
               <td>{obtenerNombreCategoria(producto.id_categoria)}</td> {/* Mostrar nombre en lugar de ID */}
               <td>{producto.precio_unitario}</td>
               <td>{producto.stock}</td>
+              <td>{producto.imagen ? (
+              <img src={`data:image/png;base64,${producto.imagen}`}
+              alt={producto.nombre_producto}
+              style={{ maxWidth: '100px' }}
+            />
+          ) : (
+            'Sin imagen'
+          )}
+        </td>
               <td>
                 <Button
                   variant="outline-danger"

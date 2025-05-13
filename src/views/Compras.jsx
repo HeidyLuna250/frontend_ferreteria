@@ -200,6 +200,8 @@ const Compras = () => {
         setCompraAEditar(null);
         setDetallesEditados([]);
         setErrorCarga(null);
+        setMensajeExito('Compra actualizada correctamente😉'); // Mensaje de confirmación al eliminar exitosamente
+        setTimeout(() => setMensajeExito(null), 3000); // Oculta el mensaje automáticamente luego de 3 segundos
       } catch (error) {
         setErrorCarga(error.message);
       }
