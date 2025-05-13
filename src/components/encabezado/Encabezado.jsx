@@ -114,6 +114,16 @@ const Encabezado = () => {
                 <strong>Productos</strong>
               </Nav.Link>
 
+               {/* Opción de navegación a Productos */}
+              <Nav.Link
+                onClick={() => navegarA("/catalogo")}
+                className={estaColapsado ? "text-black" : "text-white"}
+              >
+                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
+                <strong>Catalogo Producto</strong>
+              </Nav.Link>
+
+
               {/* Opción de navegación a Categorias */}
              <Nav.Link
                 onClick={() => navegarA("/Categorias")}

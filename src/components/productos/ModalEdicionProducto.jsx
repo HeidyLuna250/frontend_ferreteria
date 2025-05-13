@@ -93,7 +93,7 @@ const ModalEdicionProducto = ({
       <img
         src={`data:image/png;base64,${productoEditado.imagen}`}
         alt="Imagen actual"
-        style={{ maxWidth: '100px', marginBottom: '10px' }}
+        style={{ maxWidth: '100px', marginBottom: '10px', borderRadius: '50%' }}
       />
     </div>
   )}

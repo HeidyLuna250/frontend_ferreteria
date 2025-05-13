@@ -10,6 +10,7 @@ import Categorias from "./views/Categorias";
 import Ventas from "./views/Ventas";
 import Compras from "./views/Compras";
 import Usuarios from "./views/Usuarios";
+import CatalogoProductos from "./views/CatalogoProductos";
 import './App.css';
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
           <Route path="/ventas" element={<Ventas/>} />
           <Route path="/compras" element={<Compras/>} />
           <Route path="/usuarios" element={<Usuarios/>} />
+          <Route path="/catalogo" element={<CatalogoProductos/>} />
 
         </Routes>
       </main>
