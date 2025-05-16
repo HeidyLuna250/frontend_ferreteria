@@ -42,6 +42,7 @@ const CatalogoProductos = () => {
             stock={producto.stock}
             id_categoria={producto.id_categoria}
             imagen={producto.imagen}
+            style={{ animationDelay: `${indice * 0.1}s` }} // NUEVO: para animación escalonada
           />
         ))}
       </Row>

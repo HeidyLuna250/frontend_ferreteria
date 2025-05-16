@@ -25,8 +25,55 @@
   opacity: 0.7;
 }
 
-@keyframes slide {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0%); }
+/* Para las tarjetas de catalago */
+/* Animación de aparición con deslizamiento suave hacia arriba */
+@keyframes fadeSlideUp { /* NUEVO */
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+/* Animación general para la tarjeta al cargar */
+.tarjeta-producto {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+}
+
+.tarjeta-producto:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-producto img {
+  object-fit: contain;
+  width: 100%;
+  height: 200px;
+}
+
+.badge-container {
+  flex-wrap: wrap;
+}
+
+/* Resplandor en el borde */
+.tarjeta-producto:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1),
+              0 0 10px rgba(0, 123, 255, 0.4);
+  border: 1px solid rgba(0, 123, 255, 0.6);
+}
+
+/* Animación de giro */
+.tarjeta-producto:hover {
+  transform: translateY(-5px) rotateZ(-1deg);
+}
+
+
+
+
+
 
