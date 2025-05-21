@@ -1,5 +1,5 @@
 import { Card } from "react-bootstrap";
-import { Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 
 const VentasPorEmpleado = ({ nombres, totales }) => {
 
@@ -9,8 +9,31 @@ const VentasPorEmpleado = ({ nombres, totales }) => {
       {
         label: 'Ventas por empleado (C$)',
         data: totales,
-        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-        borderColor: 'rgba(153, 102, 255, 1)',
+        backgroundColor: [
+          'rgba(0, 128, 255, 0.2)',     
+          'rgba(255, 0, 128, 0.2)',     
+          'rgba(128, 0, 255, 0.2)',    
+          'rgba(0, 255, 128, 0.2)',     
+          'rgba(255, 128, 0, 0.2)',    
+          'rgba(128, 255, 0, 0.2)',     
+          'rgba(0, 255, 255, 0.2)',     
+          'rgba(255, 0, 0, 0.2)',      
+          'rgba(0, 0, 255, 0.2)',       
+          'rgba(128, 0, 0, 0.2)'        
+        ],
+        borderColor: [
+          'rgba(0, 128, 255, 1)',
+          'rgba(255, 0, 128, 1)',
+          'rgba(128, 0, 255, 1)',
+          'rgba(0, 255, 128, 1)',
+          'rgba(255, 128, 0, 1)',
+          'rgba(128, 255, 0, 1)',
+          'rgba(0, 255, 255, 1)',
+          'rgba(255, 0, 0, 1)',
+          'rgba(0, 0, 255, 1)',
+          'rgba(128, 0, 0, 1)'
+        ],
+
         borderWidth: 1,
       },
     ],
@@ -44,9 +67,9 @@ const VentasPorEmpleado = ({ nombres, totales }) => {
     <Card style={{ height: "100%" }}>
       <Card.Body>
         <Card.Title>Ventas por empleado</Card.Title>
-        <div style={{ height: "100%", position: "relative" }}>
-          <Bar data={data} options={options} />
-        </div>
+      <div style={{ height: "300px", justifyContent: "center", alignItems: "center", display: "flex" }}>
+        <Pie data={data} options={options} />
+      </div>
       </Card.Body>
     </Card>
   );
