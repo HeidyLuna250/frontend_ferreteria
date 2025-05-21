@@ -12,7 +12,7 @@ const VentasPorEmpleado = ({ nombres, totales }) => {
         backgroundColor: [
           'rgba(0, 128, 255, 0.2)',     
           'rgba(255, 0, 128, 0.2)',     
-          'rgba(128, 0, 255, 0.2)',    
+          'rgba(255, 230, 0, 0.2)',    
           'rgba(0, 255, 128, 0.2)',     
           'rgba(255, 128, 0, 0.2)',    
           'rgba(128, 255, 0, 0.2)',     
@@ -24,7 +24,7 @@ const VentasPorEmpleado = ({ nombres, totales }) => {
         borderColor: [
           'rgba(0, 128, 255, 1)',
           'rgba(255, 0, 128, 1)',
-          'rgba(128, 0, 255, 1)',
+          'rgb(255, 196, 0)',
           'rgba(0, 255, 128, 1)',
           'rgba(255, 128, 0, 1)',
           'rgba(128, 255, 0, 1)',

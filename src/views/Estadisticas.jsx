@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import VentasPorMes from '../components/graficos/VentasPorMes';
 import VentasPorEmpleado from '../components/graficos/VentasPorEmpleado';
+import VentasPorCategorias from '../components/graficos/VentasPorCategorias';
+import ProductosVendidos from '../components/graficos/ProductosVendidos';
 
 const Estadisticas = () => {
 
@@ -11,9 +13,18 @@ const Estadisticas = () => {
   const [empleados, setEmpleados] = useState([]);
   const [ventasPorEmpleado, setVentasPorEmpleado] = useState([]);
 
+  const [categorias, setCategorias] = useState([]);
+  const [totalesPorCategoria, setTotalesPorCategoria] = useState([]);
+
+  const [productos, setProductos] = useState([]); 
+  const [cantidadesVendidas, setCantidadesVendidas] = useState([]); 
+
+
   useEffect(() => {
     cargaVentas();
     cargaVentasEmpleado();
+    cargaVentasPorCategoria();
+    cargaProductosVendidos();
     }, []);
 
         const cargaVentas = async () => {
@@ -45,6 +56,36 @@ const Estadisticas = () => {
     }
   };
 
+    const cargaVentasPorCategoria = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/TotalVentasPorCategorias');
+      const data = await response.json();
+      console.log(data); // Verificación para no mostrar datos vacíos
+
+      setCategorias(data.map(item => item.nombre_categoria));
+      setTotalesPorCategoria(data.map(item => item.total_ventas));
+
+    } catch (error) {
+      console.error('Error al cargar ventas por categoría:', error);
+      alert('Error al cargar ventas por categoría: ' + error.message);
+    }
+  };
+
+    const cargaProductosVendidos = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/ProductosMasVendidosPorTotal');
+      const data = await response.json();
+      console.log(data); // Validar en consola
+
+      setProductos(data.map(item => item.nombre_producto));
+      setCantidadesVendidas(data.map(item => parseInt(item.cantidad_vendida)));
+
+    } catch (error) {
+      console.error('Error al cargar productos más vendidos:', error);
+      alert('Error al cargar productos más vendidos: ' + error.message);
+    }
+  };
+
 return (
   <Container className='mt-5'>
     <br />
@@ -56,6 +97,13 @@ return (
       <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
           <VentasPorEmpleado nombres={empleados} totales={ventasPorEmpleado} />
         </Col>
+      <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
+          <VentasPorCategorias categorias={categorias} totales={totalesPorCategoria} />
+       </Col>
+      <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
+          <ProductosVendidos productos={productos} cantidades={cantidadesVendidas} />
+      </Col>
+
     </Row>
   </Container>
   );
