@@ -12,17 +12,28 @@
   margin-top: 60px;
 }
 
-/* Línea superior animada */
+/* Línea superior animada estilo "cargando" */
 .color-navbar::before {
   content: "";
   position: absolute;
   top: 0;
-  left: -50%;
-  width: 200%;
+  left: 0;
+  width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, #3a7bd5, #8ac4ff, #3a7bd5);
-  animation: slide 5s linear infinite;
-  opacity: 0.7;
+  background: linear-gradient(90deg, #346dbe, #6394c5, #71a6f0, #3d83e6);
+  background-size: 200% 100%;
+  animation: loading-bar 2s linear infinite;
+  opacity: 0.8;
+}
+
+/* Animación para simular movimiento de carga */
+@keyframes loading-bar {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Para las tarjetas de catalago */
@@ -81,6 +92,13 @@
   color: rgb(0, 0, 0) !important;
   font-weight: bold;
 }
+
+button, .btn, .tarjeta-producto {
+  border-radius: 12px;
+}
+
+
+
 
 
 

@@ -1,14 +1,13 @@
 import { Card } from "react-bootstrap";
 import { Pie } from 'react-chartjs-2';
 
-const VentasPorEmpleado = ({ nombres, totales }) => {
-
+const VentasPorEmpleado = ({ empleados, totales_Ventas }) => {
   const data = {
-    labels: nombres, // Nombres de empleados
+    labels: empleados, //Nombres de los meses
     datasets: [
       {
-        label: 'Ventas por empleado (C$)',
-        data: totales,
+        label: 'Ventas(C$)',
+        data: totales_Ventas, //total de ventas por empleado
         backgroundColor: [
           'rgba(0, 128, 255, 0.2)',     
           'rgba(255, 0, 128, 0.2)',     
@@ -63,16 +62,16 @@ const VentasPorEmpleado = ({ nombres, totales }) => {
     },
   };
 
-  return (
-    <Card style={{ height: "100%" }}>
+
+return (
+    <Card>
       <Card.Body>
         <Card.Title>Ventas por empleado</Card.Title>
-      <div style={{ height: "300px", justifyContent: "center", alignItems: "center", display: "flex" }}>
-        <Pie data={data} options={options} />
-      </div>
+        <div style={{ height: "300px", justifyContent: "center", alignItems: "center", display: "flex" }}>
+          <Pie data={data} options={options} />
+        </div>
       </Card.Body>
     </Card>
   );
 };
-
 export default VentasPorEmpleado;

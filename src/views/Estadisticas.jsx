@@ -11,7 +11,7 @@ const Estadisticas = () => {
   const [totalesPorMes, setTotalesPorMes] = useState([]);
 
   const [empleados, setEmpleados] = useState([]);
-  const [ventasPorEmpleado, setVentasPorEmpleado] = useState([]);
+  const [totales_Ventas, setTotalVentas] = useState([]);
 
   const [categorias, setCategorias] = useState([]);
   const [totalesPorCategoria, setTotalesPorCategoria] = useState([]);
@@ -19,63 +19,59 @@ const Estadisticas = () => {
   const [productos, setProductos] = useState([]); 
   const [cantidadesVendidas, setCantidadesVendidas] = useState([]); 
 
-
   useEffect(() => {
-    cargaVentas();
-    cargaVentasEmpleado();
-    cargaVentasPorCategoria();
+    cargaVentasPorMes();
+    cargaVentasPorEmpleado();
+    cargarVentasPorCategoria();
     cargaProductosVendidos();
-    }, []);
+  }, []); 
 
-        const cargaVentas = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/totalVentasPorMes');
-        const data = await response.json();
-        console.log(data); // Verificación para no mostrar datos vacios
+  const cargaVentasPorMes = async () => {
+  try{
+    const response = await fetch('http://localhost:3000/api/totalventaspormes');
+    const data = await response.json();
 
-        setMeses(data.map(item => item.mes));
-        setTotalesPorMes(data.map(item => item.total_ventas));
-
-      } catch (error) {
-        console.error('Error al cargar  ventas:', error);
-        alert('Error al cargar ventas: ' + error.message);
-      }
-    };
-
-    const cargaVentasEmpleado = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/totalVentasPorEmpleado');
-      const data = await response.json();
-
-      setEmpleados(data.map(emp => `${emp.primer_nombre} ${emp.primer_apellido}`));
-      setVentasPorEmpleado(data.map(emp => emp.total_ventas));
-
-    } catch (error) {
-      console.error('Error al cargar ventas por empleado:', error);
-      alert('Error al cargar ventas por empleado: ' + error.message);
-    }
+    setMeses(data.map(item => item.mes));
+    setTotalesPorMes(data.map(item => item.total_ventas));
+  } catch (error) {
+    console.error('Error al cargar ventas:', error);
+    alert('Error al cargar ventas: ' + error.message);
+  }
   };
 
-    const cargaVentasPorCategoria = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/TotalVentasPorCategorias');
-      const data = await response.json();
-      console.log(data); // Verificación para no mostrar datos vacíos
+    const cargaVentasPorEmpleado = async () => {
+  try{
+    const response = await fetch('http://localhost:3000/api/totalventasporempleado');
+    const data = await response.json();
 
-      setCategorias(data.map(item => item.nombre_categoria));
-      setTotalesPorCategoria(data.map(item => item.total_ventas));
-
-    } catch (error) {
-      console.error('Error al cargar ventas por categoría:', error);
-      alert('Error al cargar ventas por categoría: ' + error.message);
-    }
+    setEmpleados(data.map(item => item.primer_nombre + ' ' + item.segundo_nombre + ' ' + item.primer_apellido));
+    setTotalVentas(data.map(item => item.total_ventas));
+  } catch (error) {
+    console.error('Error al cargar ventas por empleado:', error);
+    alert('Error al cargar ventas por empleado: ' + error.message);
+  }
   };
+
+    const cargarVentasPorCategoria = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/totalventasporcategorias');
+    const data = await response.json();
+
+    // Usamos 'nombre_categoria' como etiqueta
+    setCategorias(data.map(item => item.nombre_categoria));
+
+    // Total de ventas por cada categoría
+    setTotalesPorCategoria(data.map(item => item.total_ventas));
+  } catch (error) {
+    console.error('Error al cargar ventas por categoría:', error);
+    alert('Error al cargar ventas por categoría: ' + error.message);
+  }
+};
 
     const cargaProductosVendidos = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/ProductosMasVendidosPorTotal');
       const data = await response.json();
-      console.log(data); // Validar en consola
 
       setProductos(data.map(item => item.nombre_producto));
       setCantidadesVendidas(data.map(item => parseInt(item.cantidad_vendida)));
@@ -86,26 +82,25 @@ const Estadisticas = () => {
     }
   };
 
-return (
-  <Container className='mt-5'>
-    <br />
-    <h4>Estadíscas</h4>
-    <Row className='mt-4'>
-      <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
-          <VentasPorMes meses={meses} totales_por_mes={totalesPorMes} />
+  return(
+    <Container className='mt-5'>
+      <br />
+      <h4>Estadísticas</h4>
+      <Row className='mt-4'>
+        <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
+         <VentasPorMes meses={meses} totales_por_mes={totalesPorMes} />
         </Col>
-      <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
-          <VentasPorEmpleado nombres={empleados} totales={ventasPorEmpleado} />
+        <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
+          <VentasPorEmpleado empleados={empleados} totales_Ventas={totales_Ventas} />
         </Col>
-      <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
-          <VentasPorCategorias categorias={categorias} totales={totalesPorCategoria} />
-       </Col>
-      <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
+        <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
+          <VentasPorCategorias categorias={categorias} totales_por_categoria={totalesPorCategoria} />
+        </Col>
+        <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
           <ProductosVendidos productos={productos} cantidades={cantidadesVendidas} />
       </Col>
-
-    </Row>
-  </Container>
+      </Row>
+    </Container>
   );
 };
 
