@@ -15,7 +15,8 @@ const TablaProductos = ({
   establecerPaginaActual,
   abrirModalEliminacion,
   abrirModalEdicion,
-  categorias // Nueva prop para las categorías
+  categorias, // Nueva prop para las categorías
+  generarPDFDetalleProducto
 }) => {
 
   // Función para obtener el nombre de la categoría a partir del ID
