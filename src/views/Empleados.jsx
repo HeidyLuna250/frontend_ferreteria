@@ -213,7 +213,7 @@ const Empleados = () => {
         )}
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
-            <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
+            <Button variant="secondary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
               Nuevo Empleado
             </Button>
           </Col>
