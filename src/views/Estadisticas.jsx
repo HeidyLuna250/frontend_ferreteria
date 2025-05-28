@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import VentasPorMes from '../components/graficos/VentasPorMes';
 import VentasPorEmpleado from '../components/graficos/VentasPorEmpleado';
 import VentasPorCategorias from '../components/graficos/VentasPorCategorias';
 import ProductosVendidos from '../components/graficos/ProductosVendidos';
+import ChatIA from '../components/chat/ChatIA';
 
 const Estadisticas = () => {
 
@@ -18,6 +19,8 @@ const Estadisticas = () => {
 
   const [productos, setProductos] = useState([]); 
   const [cantidadesVendidas, setCantidadesVendidas] = useState([]); 
+
+  const [mostrarChatModal, setMostrarChatModal] = useState(false); // Estado para el modal
 
   useEffect(() => {
     cargaVentasPorMes();
@@ -86,6 +89,14 @@ const Estadisticas = () => {
     <Container className='mt-5'>
       <br />
       <h4>Estadísticas</h4>
+      <Button 
+          variant="primary" 
+          className="mb-4"
+          onClick={() => setMostrarChatModal(true)}
+        >
+          Consultar con IA
+        </Button>
+        <ChatIA mostrarChatModal={mostrarChatModal} setMostrarChatModal={setMostrarChatModal} />
       <Row className='mt-4'>
         <Col xs={12} sm={12} md={12} lg={6} className='mb-4'>
          <VentasPorMes meses={meses} totales_por_mes={totalesPorMes} />
