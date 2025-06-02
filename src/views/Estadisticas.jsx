@@ -90,7 +90,7 @@ const Estadisticas = () => {
       <br />
       <h4>Estadísticas</h4>
       <Button 
-          variant="primary" 
+          variant="secondary" 
           className="mb-4"
           onClick={() => setMostrarChatModal(true)}
         >
