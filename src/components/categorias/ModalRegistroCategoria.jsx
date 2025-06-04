@@ -10,6 +10,28 @@ const ModalRegistroCategoria = ({
   agregarCategoria,
   errorCarga,
 }) => {
+
+  const validarLetras = (e) => {
+  const charCode = e.which ? e.which : e.keyCode;
+  // Permitir solo letras (A-Z, a-z)
+  if (
+    (charCode < 65 || charCode > 90) &&  // Letras mayúsculas
+    (charCode < 97 || charCode > 122) && // Letras minúsculas
+    charCode !== 8 &&  // Retroceso
+    charCode !== 46 && // Borrar
+    charCode !== 9     // Tab
+  ) {
+    e.preventDefault(); // Evita que se escriba el carácter
+  }
+};
+
+const validacionFormulario = () => {
+  return (
+    nuevaCategoria.nombre_categoria.trim() !== "" &&
+    nuevaCategoria.descripcion_categoria.trim() !== "" 
+  );
+};
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
       <Modal.Header closeButton>
@@ -24,6 +46,7 @@ const ModalRegistroCategoria = ({
               name="nombre_categoria"
               value={nuevaCategoria.nombre_categoria}
               onChange={manejarCambioInput}
+              onKeyDown={validarLetras}
               placeholder="Ingresa el nombre (máx. 20 caracteres)"
               maxLength={20}
               required
@@ -37,6 +60,7 @@ const ModalRegistroCategoria = ({
               name="descripcion_categoria"
               value={nuevaCategoria.descripcion_categoria}
               onChange={manejarCambioInput}
+              onKeyDown={validarLetras}
               placeholder="Ingresa la descripción (máx. 100 caracteres)"
               maxLength={100}
             />
@@ -52,7 +76,10 @@ const ModalRegistroCategoria = ({
         }}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={agregarCategoria}>
+        <Button variant="primary" 
+        onClick={agregarCategoria}
+        disabled={!validacionFormulario()}
+        >
           Guardar Categoría
         </Button>
       </Modal.Footer>

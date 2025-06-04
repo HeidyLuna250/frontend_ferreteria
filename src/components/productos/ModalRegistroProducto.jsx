@@ -10,6 +10,21 @@ const ModalRegistroProducto = ({
   errorCarga,
   categorias // Lista de categorías obtenidas
 }) => {
+
+  const validarLetras = (e) => {
+  const charCode = e.which ? e.which : e.keyCode;
+  // Permitir solo letras (A-Z, a-z)
+  if (
+    (charCode < 65 || charCode > 90) &&  // Letras mayúsculas
+    (charCode < 97 || charCode > 122) && // Letras minúsculas
+    charCode !== 8 &&  // Retroceso
+    charCode !== 46 && // Borrar
+    charCode !== 9     // Tab
+  ) {
+    e.preventDefault(); // Evita que se escriba el carácter
+  }
+};  
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
       <Modal.Header closeButton>
@@ -24,6 +39,7 @@ const ModalRegistroProducto = ({
               name="nombre_producto"
               value={nuevoProducto.nombre_producto}
               onChange={manejarCambioInput}
+              onKeyDown={validarLetras}
               placeholder="Ingresa el nombre (máx. 20 caracteres)"
               maxLength={20}
               required
@@ -38,6 +54,7 @@ const ModalRegistroProducto = ({
               name="descripcion_producto"
               value={nuevoProducto.descripcion_producto}
               onChange={manejarCambioInput}
+              onKeyDown={validarLetras}
               placeholder="Ingresa la descripción (máx. 100 caracteres)"
               maxLength={100}
             />
@@ -118,7 +135,10 @@ const ModalRegistroProducto = ({
         <Button variant="secondary" onClick={() => setMostrarModal(false)}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={agregarProducto}>
+        <Button variant="primary" 
+        onClick={agregarProducto}
+        
+        >
           Guardar Producto
         </Button>
       </Modal.Footer>
