@@ -97,6 +97,24 @@ button, .btn, .tarjeta-producto {
   border-radius: 12px;
 }
 
+/* Asegura que el contenedor principal ocupe toda la altura de la ventana */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Asegura que el contenido principal ocupe el espacio disponible */
+.content {
+  flex: 1 0 auto;
+}
+
+/* Asegura que el footer se mantenga en la parte inferior */
+footer {
+  flex-shrink: 0;
+}
+
+
 
 
 
